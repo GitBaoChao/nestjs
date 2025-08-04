@@ -23,9 +23,9 @@ let AgentService = class AgentService {
     constructor(promptService, configService) {
         this.promptService = promptService;
         this.configService = configService;
-        this.agentUrl = this.configService.get('AGENT_URL') || '';
-        this.apiKey = this.configService.get('API_KEY') || '';
-        this.modelName = this.configService.get('MODEL_NAME') || '';
+        this.agentUrl = this.configService.get("AGENT_URL") || "";
+        this.apiKey = this.configService.get("API_KEY") || "";
+        this.modelName = this.configService.get("MODEL_NAME") || "";
     }
     async getPrediction(query) {
         const answer = await this.callAgent(query);
@@ -38,10 +38,10 @@ let AgentService = class AgentService {
     async callAgent(query) {
         const url = this.agentUrl;
         const response = await fetch(url, {
-            method: 'POST',
+            method: "POST",
             headers: {
                 Authorization: `Bearer ${this.apiKey}`,
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 model: this.modelName,
@@ -56,24 +56,24 @@ let AgentService = class AgentService {
         }
         const reader = response.body?.getReader();
         if (!reader) {
-            throw new Error('无法获取响应流的读取器');
+            throw new Error("无法获取响应流的读取器");
         }
-        const decoder = new TextDecoder('utf-8');
-        let answer = '';
+        const decoder = new TextDecoder("utf-8");
+        let answer = "";
         let done = false;
-        let buffer = '';
+        let buffer = "";
         while (!done) {
             const { value, done: streamDone } = await reader.read();
             done = streamDone;
             if (value) {
                 buffer += decoder.decode(value, { stream: true });
-                const parts = buffer.split('\n\n');
-                buffer = parts.pop() || '';
+                const parts = buffer.split("\n\n");
+                buffer = parts.pop() || "";
                 for (const part of parts) {
                     const match = part.match(/^data: (.+)$/);
                     if (match) {
                         const data = match[1].trim();
-                        if (data === '[DONE]') {
+                        if (data === "[DONE]") {
                             continue;
                         }
                         try {
@@ -86,7 +86,7 @@ let AgentService = class AgentService {
                             }
                         }
                         catch (error) {
-                            console.log('解析 JSON 失败:', error);
+                            console.log("解析 JSON 失败:", error);
                         }
                     }
                 }

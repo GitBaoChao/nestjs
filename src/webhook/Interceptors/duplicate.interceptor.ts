@@ -1,5 +1,10 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-import { Observable, of } from 'rxjs';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from "@nestjs/common";
+import { Observable, of } from "rxjs";
 
 type RequestRecord = {
   lastTime: number;
@@ -21,8 +26,8 @@ export class AntDuplicateInterceptor implements NestInterceptor {
 
     if (record?.lastTime) {
       if (now - record.lastTime < DUPLICATE_CHECK_TIME) {
-        console.log('重复请求拦截');
-        return of('done');
+        console.log("重复请求拦截");
+        return of("done");
       }
     }
 

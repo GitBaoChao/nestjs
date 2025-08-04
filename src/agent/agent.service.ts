@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { DeepSeekChatResponse } from './types';
-import { PromptService } from '../prompt/prompt.service';
-import { EnvConfig } from '../types';
-import { ConfigService } from '@nestjs/config';
-import { extractFirstYamlFromMarkdown } from './utils';
+import { Injectable } from "@nestjs/common";
+import { DeepSeekChatResponse } from "./types";
+import { PromptService } from "../prompt/prompt.service";
+import { EnvConfig } from "../types";
+import { ConfigService } from "@nestjs/config";
+import { extractFirstYamlFromMarkdown } from "./utils";
 
 @Injectable()
 export class AgentService {
@@ -12,11 +12,11 @@ export class AgentService {
   private readonly modelName: string;
   constructor(
     private readonly promptService: PromptService,
-    private readonly configService: ConfigService<EnvConfig>,
+    private readonly configService: ConfigService<EnvConfig>
   ) {
-    this.agentUrl = this.configService.get<string>('AGENT_URL') || '';
-    this.apiKey = this.configService.get<string>('API_KEY') || '';
-    this.modelName = this.configService.get<string>('MODEL_NAME') || '';
+    this.agentUrl = this.configService.get<string>("AGENT_URL") || "";
+    this.apiKey = this.configService.get<string>("API_KEY") || "";
+    this.modelName = this.configService.get<string>("MODEL_NAME") || "";
   }
 
   async getPrediction(query: string) {
@@ -34,10 +34,10 @@ export class AgentService {
     const url = this.agentUrl;
 
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: this.modelName,
@@ -54,26 +54,26 @@ export class AgentService {
 
     const reader = response.body?.getReader();
     if (!reader) {
-      throw new Error('无法获取响应流的读取器');
+      throw new Error("无法获取响应流的读取器");
     }
-    const decoder = new TextDecoder('utf-8');
-    let answer = '';
+    const decoder = new TextDecoder("utf-8");
+    let answer = "";
     let done = false;
-    let buffer = '';
+    let buffer = "";
     while (!done) {
       const { value, done: streamDone } = await reader.read();
       done = streamDone;
       if (value) {
         buffer += decoder.decode(value, { stream: true });
         // 以 "\n\n" 分割 chunk
-        const parts = buffer.split('\n\n');
-        buffer = parts.pop() || '';
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() || "";
         for (const part of parts) {
           const match = part.match(/^data: (.+)$/);
           if (match) {
             const data = match[1].trim();
             // 检查是否为结束标记
-            if (data === '[DONE]') {
+            if (data === "[DONE]") {
               continue;
             }
             try {
@@ -88,7 +88,7 @@ export class AgentService {
               }
             } catch (error) {
               // 忽略解析失败的 chunk
-              console.log('解析 JSON 失败:', error);
+              console.log("解析 JSON 失败:", error);
             }
           }
         }

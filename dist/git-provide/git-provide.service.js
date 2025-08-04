@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GitProvideService = void 0;
+exports.GitProvideService = exports.baseUrl = void 0;
+exports.baseUrl = "http://git.innodealing.cn";
 class GitProvideService {
     userName;
     commitMessage;
@@ -30,8 +31,8 @@ class GitProvideService {
         this.gitlabToken = config.gitlabToken;
         this.webUrl = mrRequestBody.project.web_url;
         this.gitlabHeaders = {
-            'PRIVATE-TOKEN': this.gitlabToken,
-            'Content-Type': 'application/json',
+            "PRIVATE-TOKEN": this.gitlabToken,
+            "Content-Type": "application/json",
         };
     }
     getMrInfo() {
@@ -53,14 +54,14 @@ class GitProvideService {
         return this.changes;
     }
     async gitDiffFiles() {
-        const { baseUrl, projectId, mrId, gitlabHeaders } = this;
-        const url = `${baseUrl}/api/v4/projects/${encodeURIComponent(projectId)}/merge_requests/${mrId}/changes`;
+        const { projectId, mrId, gitlabHeaders } = this;
+        const url = `${exports.baseUrl}/api/v4/projects/${encodeURIComponent(projectId)}/merge_requests/${mrId}/changes`;
         const res = await fetch(url, {
             headers: gitlabHeaders,
         });
         if (!res.ok) {
             const errorText = await res.text();
-            console.error('API错误响应:', errorText);
+            console.error("API错误响应:", errorText);
             throw new Error(`获取MR变更文件失败: ${res.status} ${res.statusText}`);
         }
         const resJson = (await res.json());
@@ -69,50 +70,50 @@ class GitProvideService {
         return resJson;
     }
     filterNoCodeFile() {
-        const codeFileSuffix = ['ts', 'tsx', 'js', 'jsx', 'vue', 'py'];
+        const codeFileSuffix = ["ts", "tsx", "js", "jsx", "vue", "py"];
         this.changes = this.changes.filter((change) => {
-            const newFileSuffix = change.new_path.split('.').pop() || '';
+            const newFileSuffix = change.new_path.split(".").pop() || "";
             return codeFileSuffix.includes(newFileSuffix);
         });
     }
     async getFileContent(targetFilePath, branch) {
         const { baseUrl, projectId, gitlabToken } = this;
         try {
-            const encodedFilePath = encodeURIComponent(targetFilePath).replace(/\./g, '%2E');
+            const encodedFilePath = encodeURIComponent(targetFilePath).replace(/\./g, "%2E");
             const url = `${baseUrl}/api/v4/projects/${encodeURIComponent(projectId)}/repository/files/${encodedFilePath}/raw?ref=${encodeURIComponent(branch)}`;
             const res = await fetch(url, {
                 headers: {
-                    'PRIVATE-TOKEN': gitlabToken,
+                    "PRIVATE-TOKEN": gitlabToken,
                 },
             });
             if (!res.ok) {
                 const errorText = await res.text();
                 console.error(`获取文件内容失败: ${res.status} ${res.statusText} - 文件: ${targetFilePath}, 分支: ${branch}, error: ${errorText}`);
-                return '';
+                return "";
             }
             const fileContent = await res.text();
             return fileContent;
         }
         catch (error) {
             console.error(`获取文件内容失败: ${targetFilePath}, 分支: ${branch}, error: ${error}`);
-            return '';
+            return "";
         }
     }
     async publishCommentToLine(newPath, oldPath, endLine, issueContent, type) {
         const { baseUrl, projectId, mrId, gitlabHeaders, diffRefs } = this;
         const url = `${baseUrl}/api/v4/projects/${projectId}/merge_requests/${mrId}/discussions`;
         const position = {
-            position_type: 'text',
+            position_type: "text",
             base_sha: diffRefs.base_sha,
             head_sha: diffRefs.head_sha,
             start_sha: diffRefs.start_sha,
             new_path: newPath,
             old_path: oldPath,
-            new_line: type === 'new' ? endLine : undefined,
-            old_line: type === 'old' ? endLine : undefined,
+            new_line: type === "new" ? endLine : undefined,
+            old_line: type === "old" ? endLine : undefined,
         };
         const response = await fetch(url, {
-            method: 'POST',
+            method: "POST",
             headers: gitlabHeaders,
             body: JSON.stringify({
                 body: issueContent,
@@ -122,7 +123,7 @@ class GitProvideService {
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`发送行级评论失败 (${response.status}):`, errorText, newPath, oldPath, endLine);
-            return '';
+            return "";
         }
         const result = (await response.json());
         console.log(`行级评论发送成功 - 文件: ${newPath}, 行号: ${endLine}, 评论ID: ${result.id}`);
@@ -132,7 +133,7 @@ class GitProvideService {
         const { baseUrl, projectId, mrId, gitlabHeaders } = this;
         const url = `${baseUrl}/api/v4/projects/${projectId}/merge_requests/${mrId}/notes`;
         const response = await fetch(url, {
-            method: 'POST',
+            method: "POST",
             headers: gitlabHeaders,
             body: JSON.stringify({
                 body: issueContent,
@@ -141,7 +142,7 @@ class GitProvideService {
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`发送通用评论失败 (${response.status}):`, errorText);
-            return '';
+            return "";
         }
         const result = (await response.json());
         console.log(`完善报告发送成功 - 评论ID: ${result.id}`);

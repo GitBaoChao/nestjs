@@ -23,7 +23,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                envFilePath: '.env',
+                envFilePath: ".env",
             }),
         ],
         controllers: [app_controller_1.AppController, webhook_controller_1.WebhookController],

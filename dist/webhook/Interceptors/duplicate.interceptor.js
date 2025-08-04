@@ -21,8 +21,8 @@ let AntDuplicateInterceptor = class AntDuplicateInterceptor {
         const record = exports.requestRecords.get(key);
         if (record?.lastTime) {
             if (now - record.lastTime < DUPLICATE_CHECK_TIME) {
-                console.log('重复请求拦截');
-                return (0, rxjs_1.of)('done');
+                console.log("重复请求拦截");
+                return (0, rxjs_1.of)("done");
             }
         }
         exports.requestRecords.set(key, {

@@ -1,5 +1,6 @@
-import { Config, MrRequestBody } from './types/git-provide';
-import { Change, GitlabChangesRes } from './types/gitlab-api';
+import { Config, MrRequestBody } from "./types/git-provide";
+import { Change, GitlabChangesRes } from "./types/gitlab-api";
+export declare const baseUrl = "http://git.innodealing.cn";
 export declare class GitProvideService {
     private userName;
     private commitMessage;
@@ -32,7 +33,7 @@ export declare class GitProvideService {
     gitDiffFiles(): Promise<GitlabChangesRes>;
     filterNoCodeFile(): void;
     getFileContent(targetFilePath: string, branch: string): Promise<string>;
-    publishCommentToLine(newPath: string, oldPath: string, endLine: number, issueContent: string, type: 'new' | 'old'): Promise<"" | {
+    publishCommentToLine(newPath: string, oldPath: string, endLine: number, issueContent: string, type: "new" | "old"): Promise<"" | {
         id: string;
     }>;
     publishGeneralComment(issueContent: string): Promise<string>;

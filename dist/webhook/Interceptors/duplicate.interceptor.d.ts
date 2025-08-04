@@ -1,5 +1,5 @@
-import { NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { NestInterceptor, ExecutionContext, CallHandler } from "@nestjs/common";
+import { Observable } from "rxjs";
 type RequestRecord = {
     lastTime: number;
 };

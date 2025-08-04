@@ -1,6 +1,6 @@
-import { PromptService } from '../prompt/prompt.service';
-import { EnvConfig } from '../types';
-import { ConfigService } from '@nestjs/config';
+import { PromptService } from "../prompt/prompt.service";
+import { EnvConfig } from "../types";
+import { ConfigService } from "@nestjs/config";
 export declare class AgentService {
     private readonly promptService;
     private readonly configService;

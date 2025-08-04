@@ -31,10 +31,10 @@ let WebhookController = class WebhookController {
         this.publishService = publishService;
     }
     async trigger(body, header) {
-        const gitlabToken = header['x-gitlab-token'] || '';
-        const mode = (header['x-ai-mode'] || 'report');
-        const pushUrl = header['x-push-url'] || header['x-qwx-robot-url'] || '';
-        const baseUrl = this.configService.get('GITLAB_BASE_URL') || '';
+        const gitlabToken = header["x-gitlab-token"] || "";
+        const mode = (header["x-ai-mode"] || "report");
+        const pushUrl = header["x-push-url"] || header["x-qwx-robot-url"] || "";
+        const baseUrl = "http://git.innodealing.cn";
         const gitProvider = new git_provide_service_1.GitProvideService(body, {
             gitlabToken,
             baseUrl,
@@ -50,38 +50,38 @@ let WebhookController = class WebhookController {
         if (!gitlabToken) {
             duplicate_interceptor_1.requestRecords.delete(mrUrl);
             this.publishService.publishNotification(commonPublishParams, `代码评审报告生成失败：gitlab token 不能为空`);
-            throw new Error('gitlab token 不能为空');
+            throw new Error("gitlab token 不能为空");
         }
-        const tokenHandler = new tokens_1.TokenHandler('gpt2');
+        const tokenHandler = new tokens_1.TokenHandler("gpt2");
         try {
             const diffFiles = await gitProvider.getFullDiff();
             const patchHandler = new patch_service_1.PatchHandler(diffFiles);
             const extendedDiffContent = patchHandler.getExtendedDiffContent(gitProvider);
             const [tokenCount, availableTokenCount] = tokenHandler.countTokensByModel(extendedDiffContent);
-            console.log('tokenCount >>>', tokenCount);
-            console.log('availableTokenCount >>>', availableTokenCount);
+            console.log("tokenCount >>>", tokenCount);
+            console.log("availableTokenCount >>>", availableTokenCount);
             const reviews = await this.agentService.getPrediction(extendedDiffContent);
-            console.log('reviews >>>', reviews);
+            console.log("reviews >>>", reviews);
             if (reviews) {
                 this.publishService.publish(mode, reviews, gitProvider, patchHandler.getExtendedDiffFiles(), (id) => {
-                    this.publishService.publishNotification(commonPublishParams, `代码评审完毕 ${mode === 'report' ? mrUrl + '#note_' + id : mrUrl}`);
+                    this.publishService.publishNotification(commonPublishParams, `代码评审完毕 ${mode === "report" ? mrUrl + "#note_" + id : mrUrl}`);
                 });
             }
             else {
-                throw new Error('模型生成内容异常');
+                throw new Error("模型生成内容异常");
             }
         }
         catch (error) {
             duplicate_interceptor_1.requestRecords.delete(mrUrl);
-            console.error('error >>>', error);
+            console.error("error >>>", error);
             this.publishService.publishNotification(commonPublishParams, `代码评审报告生成失败：${error}`);
         }
-        return 'ok';
+        return "ok";
     }
 };
 exports.WebhookController = WebhookController;
 __decorate([
-    (0, common_1.Post)('trigger'),
+    (0, common_1.Post)("trigger"),
     (0, common_1.UseInterceptors)(duplicate_interceptor_1.AntDuplicateInterceptor),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Headers)()),
@@ -90,7 +90,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], WebhookController.prototype, "trigger", null);
 exports.WebhookController = WebhookController = __decorate([
-    (0, common_1.Controller)('webhook'),
+    (0, common_1.Controller)("webhook"),
     __metadata("design:paramtypes", [config_1.ConfigService,
         agent_service_1.AgentService,
         publish_service_1.PublishService])
