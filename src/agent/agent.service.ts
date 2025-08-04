@@ -14,9 +14,9 @@ export class AgentService {
     private readonly promptService: PromptService,
     private readonly configService: ConfigService<EnvConfig>
   ) {
-    this.agentUrl = this.configService.get<string>("AGENT_URL") || "";
-    this.apiKey = this.configService.get<string>("API_KEY") || "";
-    this.modelName = this.configService.get<string>("MODEL_NAME") || "";
+    this.agentUrl = "https://api.deepseek.com/chat/completions";
+    this.apiKey = "sk-1d7cd9319b424d5782b1c9bd9cf4c254";
+    this.modelName = "deepseek-coder";
   }
 
   async getPrediction(query: string) {
