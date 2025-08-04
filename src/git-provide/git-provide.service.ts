@@ -88,11 +88,11 @@ export class GitProvideService {
   async gitDiffFiles() {
     const { baseUrl, projectId, mrId, gitlabHeaders } = this;
     const url = `${baseUrl}/api/v4/projects/${encodeURIComponent(projectId)}/merge_requests/${mrId}/changes`;
-
+    console.log("url >>>", gitlabHeaders);
     const res = await fetch(url, {
       headers: gitlabHeaders,
     });
-
+    console.log("res >>>", res);
     if (!res.ok) {
       const errorText = await res.text();
       console.error("API错误响应:", errorText);
