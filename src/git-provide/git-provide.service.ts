@@ -220,7 +220,8 @@ export class GitProvideService {
         body: issueContent,
       }),
     });
-
+    console.log("response >>>", response);
+    console.log("issueContent", issueContent);
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`发送通用评论失败 (${response.status}):`, errorText);
