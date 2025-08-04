@@ -211,12 +211,11 @@ export class GitProvideService {
   }
 
   async publishGeneralComment(issueContent: string) {
-    const { baseUrl, projectId, mrId, gitlabHeaders } = this;
+    const { baseUrl, projectId, mrId } = this;
     const url = `${baseUrl}/api/v4/projects/${projectId}/merge_requests/${mrId}/notes`;
 
     const response = await fetch(url, {
       method: "POST",
-      headers: gitlabHeaders,
       body: JSON.stringify({
         body: issueContent,
       }),
