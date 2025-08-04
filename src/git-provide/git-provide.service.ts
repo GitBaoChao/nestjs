@@ -1,8 +1,6 @@
 import { Config, MrRequestBody } from "./types/git-provide";
 import { Change, DiffRefs, GitlabChangesRes } from "./types/gitlab-api";
 
-export const baseUrl = "http://git.innodealing.cn";
-
 export class GitProvideService {
   private userName: string;
   private commitMessage: string;
