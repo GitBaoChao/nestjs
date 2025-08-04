@@ -4,24 +4,39 @@ exports.fixYamlFormatIssues = fixYamlFormatIssues;
 exports.extractFirstYamlFromMarkdown = extractFirstYamlFromMarkdown;
 const js_yaml_1 = require("js-yaml");
 function fixYamlFormatIssues(yamlContent) {
-    const lines = yamlContent.split('\n');
+    const lines = yamlContent.split("\n");
     const fixedLines = [];
     let inReviewItem = false;
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
-        if (line.trim().startsWith('- newPath:') || line.trim().startsWith('-newPath:')) {
+        if (line.trim().startsWith("- newPath:") ||
+            line.trim().startsWith("-newPath:")) {
             inReviewItem = true;
-            line = '  - newPath: |';
+            line = "  - newPath: |";
         }
         else if (inReviewItem) {
             const trimmedLine = line.trim();
-            if (trimmedLine.includes(':')) {
-                const colonIndex = trimmedLine.indexOf(':');
+            if (trimmedLine.includes(":")) {
+                const colonIndex = trimmedLine.indexOf(":");
                 const fieldName = trimmedLine.substring(0, colonIndex).trim();
                 const fieldValue = trimmedLine.substring(colonIndex + 1).trim();
-                const validFields = ['newPath', 'oldPath', 'startLine', 'endLine', 'type', 'issueHeader', 'issueContent'];
+                const validFields = [
+                    "newPath",
+                    "oldPath",
+                    "startLine",
+                    "endLine",
+                    "type",
+                    "issueHeader",
+                    "issueContent",
+                ];
                 if (validFields.includes(fieldName)) {
-                    if (['newPath', 'oldPath', 'type', 'issueHeader', 'issueContent'].includes(fieldName)) {
+                    if ([
+                        "newPath",
+                        "oldPath",
+                        "type",
+                        "issueHeader",
+                        "issueContent",
+                    ].includes(fieldName)) {
                         line = `    ${fieldName}: |`;
                     }
                     else {
@@ -37,14 +52,15 @@ function fixYamlFormatIssues(yamlContent) {
             }
             if (i + 1 < lines.length) {
                 const nextLine = lines[i + 1].trim();
-                if (nextLine.startsWith('- newPath:') || nextLine.startsWith('-newPath:')) {
+                if (nextLine.startsWith("- newPath:") ||
+                    nextLine.startsWith("-newPath:")) {
                     inReviewItem = false;
                 }
             }
         }
         fixedLines.push(line);
     }
-    return fixedLines.join('\n');
+    return fixedLines.join("\n");
 }
 function extractFirstYamlFromMarkdown(markdownText, isParse = true) {
     const regex = /```yaml\s*([\s\S]*?)\s*```/;
@@ -65,15 +81,16 @@ function extractFirstYamlFromMarkdown(markdownText, isParse = true) {
             const mrReview = js_yaml_1.default.load(yamlContent);
             if (mrReview && mrReview.reviews && Array.isArray(mrReview.reviews)) {
                 mrReview.reviews.forEach((review) => {
-                    review.newPath = review.newPath?.replace(/\n/g, '') || '';
-                    review.oldPath = review.oldPath?.replace(/\n/g, '') || '';
-                    review.type = review.type?.replace(/\n/g, '') || 'new';
+                    review.newPath = review.newPath?.replace(/\n/g, "") || "";
+                    review.oldPath = review.oldPath?.replace(/\n/g, "") || "";
+                    review.type =
+                        review.type?.replace(/\n/g, "") || "new";
                 });
                 result.parsed = mrReview;
             }
         }
         catch {
-            console.log('直接解析失败，尝试修复格式...');
+            console.log("直接解析失败，尝试修复格式...");
             try {
                 const fixedYamlContent = fixYamlFormatIssues(yamlContent);
                 result.fixedContent = fixedYamlContent;
@@ -81,17 +98,19 @@ function extractFirstYamlFromMarkdown(markdownText, isParse = true) {
                 const mrReview = js_yaml_1.default.load(fixedYamlContent);
                 if (mrReview && mrReview.reviews && Array.isArray(mrReview.reviews)) {
                     mrReview.reviews.forEach((review) => {
-                        review.newPath = review.newPath?.replace(/\n/g, '') || '';
-                        review.oldPath = review.oldPath?.replace(/\n/g, '') || '';
-                        review.type = review.type?.replace(/\n/g, '') || 'new';
+                        review.newPath = review.newPath?.replace(/\n/g, "") || "";
+                        review.oldPath = review.oldPath?.replace(/\n/g, "") || "";
+                        review.type =
+                            review.type?.replace(/\n/g, "") || "new";
                     });
                     result.parsed = mrReview;
                 }
-                console.log('格式修复成功，解析完成');
+                console.log("格式修复成功，解析完成");
             }
             catch (fixError) {
-                result.error = fixError instanceof Error ? fixError : new Error(String(fixError));
-                console.log('格式修复后仍然解析失败:', result.error.message);
+                result.error =
+                    fixError instanceof Error ? fixError : new Error(String(fixError));
+                console.log("格式修复后仍然解析失败:", result.error.message);
             }
         }
     }

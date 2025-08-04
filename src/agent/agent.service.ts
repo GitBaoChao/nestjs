@@ -21,6 +21,7 @@ export class AgentService {
 
   async getPrediction(query: string) {
     const answer = await this.callAgent(query);
+    console.log("answer", answer);
     const result = extractFirstYamlFromMarkdown(answer);
 
     if (result?.error) {

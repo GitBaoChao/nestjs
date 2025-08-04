@@ -31,9 +31,9 @@ let WebhookController = class WebhookController {
         this.publishService = publishService;
     }
     async trigger(body, header) {
-        const gitlabToken = header["x-gitlab-token"] || "";
+        const gitlabToken = "bc7411227";
         const mode = (header["x-ai-mode"] || "report");
-        const pushUrl = header["x-push-url"] || header["x-qwx-robot-url"] || "";
+        const pushUrl = "https://open.feishu.cn/open-apis/bot/v2/hook/b7526ab6-401a-4e3a-9961-8a7a45525b89";
         const baseUrl = "http://gitlab.com";
         const gitProvider = new git_provide_service_1.GitProvideService(body, {
             gitlabToken,

@@ -23,12 +23,13 @@ let AgentService = class AgentService {
     constructor(promptService, configService) {
         this.promptService = promptService;
         this.configService = configService;
-        this.agentUrl = this.configService.get("AGENT_URL") || "";
-        this.apiKey = this.configService.get("API_KEY") || "";
-        this.modelName = this.configService.get("MODEL_NAME") || "";
+        this.agentUrl = "https://api.deepseek.com/chat/completions";
+        this.apiKey = "sk-1d7cd9319b424d5782b1c9bd9cf4c254";
+        this.modelName = "deepseek-coder";
     }
     async getPrediction(query) {
         const answer = await this.callAgent(query);
+        console.log("answer", answer);
         const result = (0, utils_1.extractFirstYamlFromMarkdown)(answer);
         if (result?.error) {
             throw result.error;
