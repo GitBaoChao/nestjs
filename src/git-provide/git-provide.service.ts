@@ -86,7 +86,7 @@ export class GitProvideService {
    * 获取 MR 变更文件
    */
   async gitDiffFiles() {
-    const { projectId, mrId, gitlabHeaders } = this;
+    const { baseUrl, projectId, mrId, gitlabHeaders } = this;
     const url = `${baseUrl}/api/v4/projects/${encodeURIComponent(projectId)}/merge_requests/${mrId}/changes`;
 
     const res = await fetch(url, {
