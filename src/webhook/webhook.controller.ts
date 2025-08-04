@@ -35,7 +35,7 @@ export class WebhookController {
     const gitlabToken = header["x-gitlab-token"] || "";
     const mode = (header["x-ai-mode"] || "report") as "report" | "comment";
     const pushUrl = header["x-push-url"] || header["x-qwx-robot-url"] || "";
-    const baseUrl = "http://git.innodealing.cn";
+    const baseUrl = "http://gitlab.com";
 
     const gitProvider = new GitProvideService(body, {
       gitlabToken,
