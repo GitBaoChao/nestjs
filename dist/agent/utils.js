@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fixYamlFormatIssues = fixYamlFormatIssues;
 exports.extractFirstYamlFromMarkdown = extractFirstYamlFromMarkdown;
-const js_yaml_1 = require("js-yaml");
+const yaml = require("js-yaml");
 function fixYamlFormatIssues(yamlContent) {
     const lines = yamlContent.split("\n");
     const fixedLines = [];
@@ -78,7 +78,7 @@ function extractFirstYamlFromMarkdown(markdownText, isParse = true) {
     };
     if (isParse) {
         try {
-            const mrReview = js_yaml_1.default.load(yamlContent);
+            const mrReview = yaml.load(yamlContent);
             if (mrReview && mrReview.reviews && Array.isArray(mrReview.reviews)) {
                 mrReview.reviews.forEach((review) => {
                     review.newPath = review.newPath?.replace(/\n/g, "") || "";
@@ -95,7 +95,7 @@ function extractFirstYamlFromMarkdown(markdownText, isParse = true) {
                 const fixedYamlContent = fixYamlFormatIssues(yamlContent);
                 result.fixedContent = fixedYamlContent;
                 result.fixApplied = true;
-                const mrReview = js_yaml_1.default.load(fixedYamlContent);
+                const mrReview = yaml.load(fixedYamlContent);
                 if (mrReview && mrReview.reviews && Array.isArray(mrReview.reviews)) {
                     mrReview.reviews.forEach((review) => {
                         review.newPath = review.newPath?.replace(/\n/g, "") || "";
