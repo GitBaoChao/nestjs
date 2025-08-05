@@ -128,11 +128,19 @@ export class PublishService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        msgtype: "markdown",
-        markdown: {
-          content:
-            `**${userName}** 在项目 **${projectName}** 发起了合并请求\n源分支：**${sourceBranch}**\n目标分支：**${targetBranch}**\n\n` +
-            content,
+        msg_type: "interactive",
+        card: {
+          schema: "2.0",
+          body: {
+            elements: [
+              {
+                tag: "markdown",
+                content:
+                  `**${userName}** 在项目 **${projectName}** 发起了合并请求\n源分支：**${sourceBranch}**\n目标分支：**${targetBranch}**\n\n` +
+                  content,
+              },
+            ],
+          },
         },
       }),
     });
